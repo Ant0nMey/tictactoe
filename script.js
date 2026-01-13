@@ -1,7 +1,7 @@
 function createPlayer(playerName) {
 
     let name = playerName;
-    let choix = [];
+    let choix = ["0", "1"];
 
     return { name, choix };
 };
@@ -20,7 +20,8 @@ function choixPlayer(player) {
     player.choix.push(index);
 };
 
-function vérifierGagnant(player1, player2) {
+function verifierGagnant(player1, player2) {
+    let gagnant = true;
     const combinaisonGagnante = {
         combinaison : [ 
             [ "0", "1", "2"],
@@ -33,6 +34,13 @@ function vérifierGagnant(player1, player2) {
             [ "1", "4", "7"]
         ]
     };
+    for (var key in combinaisonGagnante) {
+        for (var combi in key) {
+            for ( choix in player1.choix ) {
+                if (choix in combi)
+            }
+        }
+    }
 };
 
 const gameboard = createGameboard();
