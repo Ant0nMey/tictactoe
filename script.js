@@ -7,13 +7,15 @@ function createPlayer(playerName, playerSymbol) {
     let name = playerName;
     let choix = [];
     let symbol = playerSymbol;
+    let score = 0;
 
-    return { name, choix, symbol };
+    return { name, choix, symbol, score };
 };
 
 function createGameboard() {
     let board = document.querySelector(".gridboard")
     let indexOfDiv = [];
+    // Création de 9 éléments <div .carre id="i"> puis stockage des div dans indexOfDiv[].
     for (i = 0; i < 9; i++) {
     indexOfDiv[i] = document.createElement("div");
     indexOfDiv[i].className = "carre";
@@ -26,52 +28,59 @@ function createGameboard() {
 
 function play(player1, player2) {
 
-    let counter = 0;
+    // Initialisation de l'affichage : "Au tour du joueur 1".
     let texte = document.querySelector(".texte");
-    let gagnant1 = false;
-    let gagnant2 = false;
-    for (let i = 0; i < 9; i++) {
+    texte.innerHTML = `<p>Au tour de <strong>${player1.name}</strong> (<strong>${player1.symbol}</strong>)`;
 
+    // Utilisation d'un counter permettant de changer de joueur à chaque tour.
+    let counter = 0;
+    let gagnant = false;
+
+    // On itaire sur toutes les cases à l'aide de l'id des cases : i = <div id=[i]>.
+    for (let i = 0; i < 9; i++) {
+        // Créer un listener sur chaque carré de mon gameboard.
         let divTest = document.getElementById(i);
         divTest.addEventListener('click', () => {
+
+            // Empécher le click lorsque toutes les cases ont été cochées ( 9 cases au total ).
             if (counter === 9) { return;}
+
+            // Empécher le click sur un case qui a déja était sélectionnée.
             if (divTest.textContent !== "") return;
-            if (gagnant1 === true || gagnant2 === true) return;
-            console.log(`counter : ${counter}`);
+            
+            // Empécher le click lorsqu'un joueur a gagné la partie.
+            if (gagnant) return;
+
             let index = divTest.getAttribute("id");
 
-            console.log(`counter is even : ${isEven(counter)}`)
+             /* La selection d'une case par un joueur :
+                - push l'id de la case dans le tableau choix[] du joueur.
+                - Ecrit le symbole du joueur dans la case.
+                - Indique au joueur suivant de jouer.
+            */            
             if (isEven(counter)) {
-                console.log(`boucle avec player 2:`);
-                texte.innerHTML = `<p>Au tour de <strong>${player1.name}</strong>`;
-                player2.choix.push(index)
-                divTest.textContent = player2.symbol;
-                console.log(`boucle avec player 2: player2.name : ${player2.name}`)
-                gagnant1 = verifierGagnant(player2)
-                console.log(`boucle avec player 2: gagnant1 : ${gagnant1}`)
 
-            } else {
-                console.log(`boucle avec player 1:`);
-                texte.innerHTML = `<p>Au tour de <strong>${player1.name}</strong>`;
+                console.log(`tour joueur : ${player1.name}`);
                 player1.choix.push(index)
                 divTest.textContent = player1.symbol;
-                console.log(`boucle avec player 1: player1.name : ${player1.name}`)
-                gagnant2 = verifierGagnant(player1)
-                console.log(`boucle avec player 1: gagnant1 : ${gagnant2}`)
-            }
+                texte.innerHTML = `<p>Au tour de <strong>${player2.name}</strong> (<strong>${player2.symbol}</strong>)`;
+            } else {
+                console.log(`tour joueur : ${player2.name}`);
+                player2.choix.push(index)
+                divTest.textContent = player2.symbol;
+                texte.innerHTML = `<p>Au tour de <strong>${player1.name}</strong> (<strong>${player1.symbol}</strong>)`;
+            };
+            if (verifierGagnant(player1) || verifierGagnant(player2)) return gagnant = true;
+
             counter++;
 
             if (counter === 9) {
             texte.innerHTML = "<p>Match nul !</p>";
-            }
-            ;})
-        console.log(`i : ${i}`);
+            };
+        ;})
 
-    }
-    
-    /*intIndex = parseInt(index);
-    console.log(`intIndex: ${intIndex}.`);
-    gameboard[intIndex] = player.symbol; */
+    };
+
 };
 
 function verifierGagnant(player) {
@@ -88,7 +97,6 @@ function verifierGagnant(player) {
         ]
 
     let gagnant = false;
-
     for (let combinaison of combinaisonGagnante) {
         gagnant = true;
         let counter = 0;
@@ -102,11 +110,13 @@ function verifierGagnant(player) {
                         texte.innerHTML = `<p><strong>${player.name}</strong> a gagné ! `;
                         gagnant = true;
                         console.log(`${player.name} à gagné.`)
-                        console.log(`combinaison gagnante : ${combinaison}.`)
+                        console.log(`combinaison gagnante : ${combinaison}.`);
+                        player.score++;
+                        console.log(`${player.name} score : ${player.score}`);
                         return gagnant
                     }
                     else {
-                         continue 
+                         continue;
                     }
                 }
             }
@@ -114,24 +124,37 @@ function verifierGagnant(player) {
     };
      
 
-const gameboard = createGameboard();
-
-
-let playerName1 = prompt("Entrez le nom du joueur 1") 
+let start = document.querySelector(".start")
+let playerName1 = document.getElementById("name1").value
+let playerName2= document.getElementById("name2").value 
 const player1 = createPlayer(playerName1, "X");
-
-let playerName2= prompt("Entrez le nom du joueur 2") 
 const player2 = createPlayer(playerName2, "O");
 
-play(player1, player2);
- /*
-let gagnant = false;
-while (gagnant == false) {
+start.addEventListener('click', () => {
+    
+    let playerName1 = document.getElementById("name1").value
+    let playerName2= document.getElementById("name2").value 
+    
+    if (!(player1.name == playerName1 && player2.name == playerName2)){
+        player1.name = playerName1
+        player2.name = playerName2
+        player1.score = 0;
+        player2.score = 0;
+    }
 
-choixPlayer(playerJosh, gameboard);
-if (verifierGagnant(playerJosh) == true)
-    break;
-choixPlayer(playerJean, gameboard);
-if (verifierGagnant(playerJean) == true)
-    break;
-}; */
+
+    player1.choix = [];
+    player2.choix = [];
+    if (!document.querySelector(".carre")) {
+    gameboard = createGameboard();
+    }
+    if (document.querySelector(".carre")) {
+        document.querySelectorAll(".carre").forEach(e => e.remove());
+        gameboard = createGameboard();
+        console.log('[+] Création de la gameboard');
+    }
+
+    console.log(`gameboard.indexOfDiv : ${gameboard}`);
+
+    play(player1, player2);
+});
