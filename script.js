@@ -70,7 +70,11 @@ function play(player1, player2) {
                 divTest.textContent = player2.symbol;
                 texte.innerHTML = `<p>Au tour de <strong>${player1.name}</strong> (<strong>${player1.symbol}</strong>)`;
             };
-            if (verifierGagnant(player1) || verifierGagnant(player2)) return gagnant = true;
+            if (verifierGagnant(player1) || verifierGagnant(player2)) {
+                let scoreAffichage = document.querySelector(".score");
+                scoreAffichage.textContent = `${player1.name} : ${player1.score} | ${player2.name} : ${player2.score}`;
+                return gagnant = true;
+            }
 
             counter++;
 
@@ -140,6 +144,8 @@ start.addEventListener('click', () => {
         player2.name = playerName2
         player1.score = 0;
         player2.score = 0;
+        let scoreAffichage = document.querySelector(".score");
+        scoreAffichage.textContent = `${player1.name} : ${player1.score} | ${player2.name} : ${player2.score}`;
     }
 
 
